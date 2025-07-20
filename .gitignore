@@ -1,0 +1,30 @@
+# Environment variables
+.env
+python-dotenv.env
+
+# JSON cache files
+model_compat_cache.json
+model_page_cache.json
+part_page_cache.json
+visited_links.json
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+.venv/
+
+# VS Code settings
+.vscode/
+
+# OS system files
+.DS_Store
+Thumbs.db
+
+# Node (optional frontend)
+node_modules/
+
+
+
