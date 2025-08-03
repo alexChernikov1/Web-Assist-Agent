@@ -7,6 +7,7 @@ model_compat_cache.json
 model_page_cache.json
 part_page_cache.json
 visited_links.json
+part_compat_cache.json
 
 # Python cache files
 __pycache__/
@@ -26,5 +27,15 @@ Thumbs.db
 # Node (optional frontend)
 node_modules/
 
+# api example code 
+api_code.py
+main_7_27.py
+main_7_25.py
+flow_graph.py
+fetch_html_7_27.py
+
+# Ignore PDF and ZIP files
+*.pdf
+*.zip
 
 

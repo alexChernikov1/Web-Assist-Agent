@@ -1,23 +1,23 @@
 from __future__ import annotations
+
 # ════════════════════════════════════════════════════════════════════════
-#  main.py — Firecrawl‑powered FastAPI backend  (planner‑based orchestration)
-#  NOW USING LangChain + LangGraph create_react_agent FOR TOOL CALLS
-#  (All original functions kept intact; only orchestration layer changed)
+#  main.py — Firecrawl‑powered FastAPI backend with LangGraph orchestration
+#  Uses LangChain + LangGraph `create_react_agent` for tool planning
 # ════════════════════════════════════════════════════════════════════════
-#  Debug prints and log messages are preserved 1‑for‑1
-#  Only *two* structural changes:
-#      1.  LangChain/LangGraph tool wrappers + agent construction
-#      2.  process_question() now routes conversation through that agent
+#  Debug prints and logs preserved 1‑for‑1
+#  Major changes:
+#    1. LangChain/LangGraph tool wrappers + agent construction
+#    2. process_question() routes queries through the agent
 # ------------------------------------------------------------------------
 
-import logging, os, re, textwrap, time, json, threading
+import os, re, json, time, logging, threading, textwrap, requests
 from enum import Enum
-from typing import Literal, Tuple, List, Dict, Set, Union
+from typing import Optional, Literal, Tuple, List, Dict, Set, Union
 
-# ───────────────────────────  Third‑party libs  ──────────────────────────
+# ───────────────────────── Third‑party libraries ─────────────────────────
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -30,24 +30,10 @@ from dotenv import load_dotenv
 from firecrawl import FirecrawlApp
 from openai import OpenAI
 
-# NEW ↓↓↓
+# ─────────────── LangChain + LangGraph agent imports ───────────────
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import Tool
 from langgraph.prebuilt import create_react_agent
-from typing import Literal
-# NEW ↑↑↑
-# ─── stdlib / 3rd-party imports ───
-import time, re, logging, requests
-from typing import Optional, List, Set
-
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 
 logger = logging.getLogger(__name__)
 # ─────────────────────────  GLOBAL CONFIG  ──────────────────────────
@@ -610,18 +596,6 @@ def _resolve_part_url(
 
 
 
-# ─────────────────────────── main entry point ───────────────────────────
-# ─── imports / headers stay the same ───
-import time, re, logging, requests
-from typing import Optional, List, Set
-
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 
 logger = logging.getLogger(__name__)
 _HEADERS = {
