@@ -48,29 +48,35 @@ Open `http://127.0.0.1:8000/docs` for the interactive Swagger UI.
 
 ## 🔄 High-Level Flow
 
-```mermaid
-graph TD
-  A[User&nbsp;/chat POST] --> B[analyse(q)]
-  B -->|compat_intent| C[Pre-warm <br/>model-part cache]
-  B --> D[Build agent messages]
-  D --> E[LangGraph agent]
-  subgraph Tool Calls
-    E -->|scrape_model| G[scrape_model_tool]
-    E -->|scrape_part|  H[scrape_part_tool]
-    E -->|get_compat|   I[get_compat_tool]
-    E -->|firecrawl|    J[firecrawl_research_tool]
-    E -->|need_ctx|     K[need_more_context_yes_no]
-    E -->|fill_ctx|     L[fill_context_tool]
-    G --> E
-    H --> E
-    I --> E
-    J --> E
-    K --> E
-    L --> E
-  end
-  E --> M[Final LLM answer]
-  M --> N[Return JSON <br/>{ reply: … }]
+```txt
+A[User /chat POST] --> B[analyse(q)]
+B -->|compat_intent|   C[Pre-warm model-part cache] --> D[Build agent messages] |
+B -->|no_compat_intent|            F[Skip pre-warm] --> D[Build agent messages] |
+                                                                                |
+                                                                                |
+      E[LangGraph agent] <------------------------------------------------------┘
+          |
+          |  ┌──────────────────────── Tool Calls (loop) ────────────────────────┐
+          |  | E -->|scrape_model()|      G[scrape_model_tool]        --> E      |
+          |  | E -->|scrape_part()|       H[scrape_part_tool]         --> E      |
+          |  | E -->|get_compat()|        I[get_compat_tool]          --> E      |
+          |  | E -->|firecrawl()|         J[firecrawl_research_tool]  --> E      |
+          |  | E -->|need_ctx()|          K[need_more_context_yes_no] --> E      |
+          |  | E -->|fill_ctx()|          L[fill_context_tool]        --> E      |
+          |  | E -->|compat_reason()|     M[compat_reasoning_tool]    --> E      |
+          |  | E -->|part_lookup()|       N[part_lookup_tool]         --> E      |
+          |  | E -->|model_lookup()|      O[model_lookup_tool]        --> E      |
+          |  | E -->|session_cache()|     P[session_cache_tool]       --> E      |
+          |  └───────────────────────────────────────────────────────────────────┘
+          |      ↑                                                        ↓
+          |      └────────── repeats until all context is ready ──────────┘
+          v
+      Q[Final LLM answer]
+          |
+          v
+      R[Return JSON { reply: … }]
 ```
+
 
 ---
 
